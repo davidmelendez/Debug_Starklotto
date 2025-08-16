@@ -4,12 +4,13 @@
 Sandbox repository for **Debugging and testing Starklotto**.  
 Includes:
 
-- Starknet contracts (Cairo 2.11.4)
-- Test setup with **Starknet Foundry 0.46.0**
+- Starknet contracts based on **Scaffold Starknet v1.0.12**
+- Test setup compatible with **Starknet Foundry 0.46.0**
+- Cairo 2.11.4
 - Ready-to-use structure for development and debugging
 - Potential frontend integration for contract interaction
 
-> This repository was created as an isolated environment for experimenting without affecting the production logic.
+> This repository is an isolated environment for experimenting without affecting the main production code.
 
 ---
 
@@ -20,6 +21,7 @@ Includes:
 - Cairo 2.11.4
 - Node.js >= 18 (for frontend)
 - Yarn or npm (for frontend)
+- Scaffold Starknet version 1.0.12
 
 ---
 
