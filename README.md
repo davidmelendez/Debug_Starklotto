@@ -1,4 +1,4 @@
-# Debug_Starklotto
+# Debug Starklotto
 
 ## 📌 Description
 Sandbox repository for **Debugging and testing Starklotto**.  
