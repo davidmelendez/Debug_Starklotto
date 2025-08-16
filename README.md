@@ -35,7 +35,7 @@ cd Debug_Starklotto
 ```
 
 2. Install frontend dependencies
-3. 
+   
 ```
 cd frontend
 npm install
