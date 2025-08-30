@@ -1,0 +1,201 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  YARN_VERSION: '3.2.3'
+
+jobs:
+  # Job para el frontend (Next.js)
+  frontend:
+    name: Frontend Tests & Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint frontend
+        run: yarn next:lint
+        working-directory: packages/nextjs
+
+      - name: Check TypeScript types
+        run: yarn next:check-types
+        working-directory: packages/nextjs
+
+      - name: Run frontend tests
+        run: yarn test:nextjs
+        working-directory: packages/nextjs
+
+      - name: Build frontend
+        run: yarn build
+        working-directory: packages/nextjs
+
+  # Job para los contratos (Cairo/Starknet)
+  contracts:
+    name: Contracts Tests & Compilation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install Scarb
+        uses: actions-rs/install@v0.1
+        with:
+          crate: scarb
+          use-tool-cache: true
+
+      - name: Install Starknet Foundry
+        uses: actions-rs/install@v0.1
+        with:
+          crate: snforge
+          use-tool-cache: true
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Check formatting
+        run: yarn format:check
+
+      - name: Compile contracts
+        run: yarn compile
+        working-directory: packages/snfoundry
+
+      - name: Run contract tests
+        run: yarn test
+        working-directory: packages/snfoundry
+
+  # Job para tests generales del proyecto
+  tests:
+    name: All Tests
+    runs-on: ubuntu-latest
+    needs: [frontend, contracts]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install Scarb
+        uses: actions-rs/install@v0.1
+        with:
+          crate: scarb
+          use-tool-cache: true
+
+      - name: Install Starknet Foundry
+        uses: actions-rs/install@v0.1
+        with:
+          crate: snforge
+          use-tool-cache: true
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run contract tests
+        run: yarn test
+        working-directory: packages/snfoundry
+
+      - name: Run frontend tests
+        run: yarn test:nextjs
+        working-directory: packages/nextjs
+
+  # Job para verificación de formato
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install Scarb
+        uses: actions-rs/install@v0.1
+        with:
+          crate: scarb
+          use-tool-cache: true
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Check formatting
+        run: yarn format:check
+
+  # Job para linting general
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint frontend
+        run: yarn next:lint
+        working-directory: packages/nextjs
+
+      - name: Check TypeScript types
+        run: yarn next:check-types
+        working-directory: packages/nextjs
