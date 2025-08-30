@@ -8,8 +8,8 @@ env:
   NODE_VERSION: '18'
 
 jobs:
-  deploy-frontend:
-    name: Deploy Frontend
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
@@ -31,7 +31,7 @@ jobs:
         run: yarn build
         working-directory: packages/nextjs
 
-      # Si usas Vercel, puedes descomentar estas líneas
+      # Descomenta para deploy automático a Vercel
       # - name: Deploy to Vercel
       #   uses: amondnet/vercel-action@v25
       #   with:
@@ -39,52 +39,3 @@ jobs:
       #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
       #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
       #     working-directory: ./packages/nextjs
-
-  deploy-contracts:
-    name: Deploy Contracts
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: Install Scarb
-        uses: actions-rs/install@v0.1
-        with:
-          crate: scarb
-          use-tool-cache: true
-
-      - name: Install Starknet Foundry
-        uses: actions-rs/install@v0.1
-        with:
-          crate: snforge
-          use-tool-cache: true
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Compile contracts
-        run: yarn compile
-        working-directory: packages/snfoundry
-
-      # Descomenta estas líneas si quieres deploy automático de contratos
-      # - name: Deploy contracts
-      #   run: yarn deploy
-      #   working-directory: packages/snfoundry
-      #   env:
-      #     PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      #     RPC_URL: ${{ secrets.RPC_URL }}
