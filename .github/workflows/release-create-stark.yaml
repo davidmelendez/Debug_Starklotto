@@ -75,7 +75,7 @@ jobs:
 
       - name: Copy Files to Destination Repository
         run: |
-          rsync -av --delete \
+            rsync -av --delete \
             --exclude='.git/' \
             --include='.github/' \
             --include='.github/workflows/' \
@@ -86,9 +86,9 @@ jobs:
             --exclude='CHANGELOG*' \
             --exclude='CONTRIBUTING*' \
             source_repo/ destination_repo/templates/base
-          cd destination_repo
-          git add .
-          git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
+            cd destination_repo
+            git add .
+            git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
 
       - name: Format .gitignore files
         run: |
@@ -119,7 +119,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "22"
+          node-version: "16"
           registry-url: "https://registry.npmjs.org/"
 
       - name: Publish release
